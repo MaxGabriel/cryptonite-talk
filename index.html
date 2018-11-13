@@ -1,49 +1,540 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+        <title>reveal.js</title>
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/black.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1>Introduction to Cryptonite</h1>
+                    <h2>Max Tagher</h2>
+                </section>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+                <section>
+                    <h1>CTO @ Mercury</h1>
+                    <h3>We're hiring</h3>
+                </section>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
-		</script>
-	</body>
+                <section>
+                    <h1>Caveats</h1>
+
+                    <ul>
+                        <li>I am not a cryptographer</li>
+                        <li>I am not an expert on Cryptonite</li>
+                        <li>Goals</li>
+                        <ul>
+                            <li>Be comfortable using cryptonite</li>
+                            <li>Be confident in Haskell's cryptographic capabilities</li>
+                            <li>Use cryptonite in your own projects</li>
+                        </ul>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Structure of the Talk</h1>
+                    <ul>
+                        <li>What is Cryptonite</li>
+                        <li>Fundamentals</li>
+                        <ul>
+                            <li>Through the lens of Type Signatures</li>
+                        </ul>
+                        <li>Demos</li>
+                        <li>Sidebar Topics</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>What is Cryptonite?</h1>
+                </section>
+
+                <section>
+                    <h1>Cryptonite</h1>
+                    <ul>
+                        <li>One stop shop for Haskell cryptography</li>
+                        <ul>
+                            <li>18 Ciphers</li>
+                            <li>5 Key-Derivation Functions (KDFs)</li>
+                            <li>3 Message Authentication Code functions (MACs)</li>
+                            <li>38 Hashes</li>
+                            <li>Public Key Crypto (e.g. RSA)</li>
+                            <li>Random number generation</li>
+                            <li>Mathematical primitives (e.g. primes)</li>
+                            <li>etc.</li>
+                        </ul>
+                    </ul>
+                </section>
+                <section>
+                    <h1>Cryptonite</h1>
+                    <ul>
+                        <li>Replaces: nonce, otp, bcrypt, pwstore-fast, etc.</li>
+                        <ul>
+                            <li>pwstore-fast not updated in four years</li>
+                            <li>otp merged into cryptonite</li>
+                            <li>More unified interface</li>
+                        </ul>
+                    </ul>
+                </section>
+
+                
+
+                <section>
+                    <h1>Type Signature: Argon2</h1>
+<pre><code class="hljs haskell" data-noescape data-trim>
+hash :: ( ByteArrayAccess password
+        , ByteArrayAccess salt
+        , ByteArray out
+        ) 
+     => Options 
+     -> password 
+     -> salt 
+     -> Int 
+     -> CryptoFailable out
+</code></pre>
+                </section>
+
+                <section>
+                    <h1>Fundamental: Memory Package</h1>
+                </section>
+
+                <!-- Memory basics -->
+                <section>
+                    <h1>Memory</h1>
+                    <ul>
+                        <li>Low-level memory functions</li>
+                        <ul>
+                            <li>e.g. get the first byte of an array of bytes, convert encodings, etc.</li>
+                        </ul>
+                        <li>Typeclass-based</li>
+                        <ul>
+                            <li>More generic than using ByteString</li>
+                        </ul>
+                    </ul>
+                        
+                </section>
+                <section>
+                    <h1>ByteArrayAccess</h1>
+                    <ul>
+                        <li>Read access to an array of bytes</li>
+                        <!-- <ul>
+                            <li>Compare length (<code>length</code>)
+                            <li>Constant-time equality (<code>constEq</code>)
+                        </ul> -->
+                    </ul>
+<pre><code class="hljs haskell" data-noescape data-trim>
+index :: ByteArrayAccess a 
+      => a 
+      -> Int 
+      -> Word8
+
+constEq :: ( ByteArrayAccess bs1
+           , ByteArrayAccess bs2) 
+        => bs1 
+        -> bs2 
+        -> Bool
+</code></pre>
+                </section>
+                <section>
+                    <h1>ByteArray</h1>
+                    <ul>
+                        <li>Allows creating an array of bytes</li>
+                    </ul>
+<pre><code class="hljs haskell" data-noescape data-trim>
+append :: ByteArray bs 
+       => bs 
+       -> bs 
+       -> bs
+
+convert :: ( ByteArrayAccess bin
+           , ByteArray bout) 
+        => bin 
+        -> bout
+</code></pre>
+                </section>
+
+                <section>
+                    <h1>ByteArray/ByteArrayAccess</h1>
+                    <ul>
+                        <li>Instances</li>
+                        <ul>
+                            <li>String</li>
+                            <li>ByteString</li>
+                            <li>Bytes</li>
+                            <li>ScrubbedBytes</li>
+                        </ul>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Type Signature: Argon2</h1>
+<pre><code class="hljs haskell" data-noescape data-trim>
+hash :: ( ByteArrayAccess password
+        , ByteArrayAccess salt
+        , ByteArray out
+        ) 
+     => Options 
+     -> password 
+     -> salt 
+     -> Int 
+     -> CryptoFailable out
+</code></pre>
+                </section>
+
+                <section>
+                    <h1>Fundamental: CryptoFailable</h1>
+                </section>
+
+                <section>
+                    <h1>CryptoFailable</h1>
+                    <ul>
+                        <li>Specialized Either</li>
+                    </ul>
+<pre><code class="hljs haskell" data-noescape data-trim>
+data CryptoFailable a = 
+   CryptoPassed a -- Right
+ | CryptoFailed CryptoError -- Left
+</code></pre>
+                </section>
+                <section>
+                    <h1>CryptoFailable</h1>
+                    <ul>
+                        <li>In module Crypto.Error</li>
+                        <li>Is an instance of Monad</li>
+                        <li>Utility functions to convert to:</li>
+                        <ul>
+                            <li>Maybe</li>
+                            <li>Either</li>
+                            <li>Exceptions</li>
+                        </ul>
+                        <li>CryptoError is an enum of 20 possible errors</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Type Signature: Bcrypt</h1>
+<pre><code class="hljs haskell" data-noescape data-trim>
+hashPassword :: ( MonadRandom m
+                , ByteArray password
+                , ByteArray hash)    
+             => Int 
+             -> password    
+             -> m hash
+</code></pre>
+                </section>
+
+                <section>
+                    <h1>Fundamental: MonadRandom</h1>
+<pre><code class="hljs haskell" data-noescape data-trim>
+getRandomBytes :: ByteArray byteArray => Int -> m byteArray
+</code></pre>
+                    <ul>
+                        <li>IO is an instance</li>
+                        <li>(You'll frequently need type annotations for this function)</li>
+                    </ul>
+<pre><code class="hljs haskell" data-noescape data-trim>
+main = do 
+    (byteString :: ByteString) <- getRandomBytes 32
+    -- Use the bytes
+</code></pre>    
+                </section>
+
+                <section>
+                    <h1>Example: BCrypt</h1>
+                    <ul>
+                        <li>Password hashing function</li>
+                        <ul>
+                            <li>Specialized for short keys (user-input passwords)</li>
+                        </ul>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Password Hashing with BCrypt</h1>
+                    <ul>
+                        <li>Crypto.KDF.BCrypt</li>
+                        <li><code>hashPassword</code></li>
+                        <li><code>validatePasswordEither</code></li>
+                    </ul>
+                </section>
+
+
+
+                <section>
+                    <h1>Demo</h1>
+                    <h2>Password hashing with BCrypt</h2>
+                </section>
+
+                <section>
+                    <h1>Example: 2FA Using TOTP</h1>
+                </section>
+
+                <section>
+                    <h1>TOTP Background</h1>
+                    <ul>
+                        <li>"Time-Based One-Time-Password"</li>
+                        <li>Server generates a secret key</li>
+                        <li>The secret key is shared with a client</li>
+                        <li>To authenticate, both the server and client run the TOTP algorithm using the current time as the input</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>TOTP-Google Authenticator</h1>
+                    <ul>
+                        <li>Most famous implementation</li>
+                        <li>Base32 encode the secret key, and remove padding</li>
+                        <li>Some restrictions, like only 30 second intervals</li>
+                        <li>Authenticator app reads the key as a QR code</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Crypto.OTP</h1>
+
+                    <ul>
+                        <li><pre>totpVerify</pre></li>
+                        <li><pre>defaultTOTPParams</pre></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Procedure</h1>
+                    <ol>
+                        <li>Generate a secret key and store it in a database, marking the code as unverified.</li>
+                        <li>Return the encoded secret key to the client</li>
+                        <li>The client should render a QR code with the data:</li>
+                    </ol>
+                    <pre>otpauth://totp/NAME?secret=ENCODED_SECRET&issuer=NAME</pre>
+                </section>
+                <section>
+                    <h1>Procedure</h1>
+                    <ol start="4">
+                        <li>The user should scan the QR code using Google Authenticator, then submit their 6 digit code ('OTP').</li>
+                        <li>Use <code>totpVerify</code> with <code>defaultTOTPParams</code> to validate the code, then mark the code as verified.</li>
+                        <li>Future login attempts should require an OTP.</li>
+                    </ol>
+                </section>
+
+
+                <section>
+                    <h1>Demo</h1>
+                    <h2>2FA Using TOTP</h2>
+                </section>
+
+                <section>
+                    
+                    <h2>Data.Memory.Encoding</h2>
+<pre><code class="hljs haskell" data-noescape data-trim>
+convertToBase :: (ByteArrayAccess bin, ByteArray bout) => Base -> bin -> bout
+</code></pre>
+                </section>
+
+                <section>
+                    <h1>Encoding</h1>
+                    <ul>
+                    <li>Replaces e.g. base64-bytestring, base32-bytestring, base32-string, etc.</li>
+                        <ul>
+                            <li>base32-bytestring not updated in five years</li>
+                            <li>base32-string performs incorrect conversion in some cases</li>
+                        </ul>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Example: AEAD</h1>
+                </section>
+
+                <section>
+                    <h1>AEAD</h1>
+                    <ul>
+                        <li>Authenticated Encryption with Associated Data</li>
+                        <li>Authenticated -> Can tell the data isn't forged</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>AEAD</h1>
+                    <ul>
+                        <li>Supports encryption and/or authentication</li>
+                        <li>Example: Network packets</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Demo</h1>
+                    <h2>Encrypting using AEAD</h2>
+                </section>
+
+                <section>
+                    <h1>Sidebar</h1>
+                    <h2>KDF Comparison</h2>
+                </section>
+
+                <section>
+                    <table>
+                        <tr>
+                            <th>KDF</th>
+                            <th>6 lower case letters</th>
+                            <th>8 lower case letters</th>
+                            <th>8 ASCII</th>
+                            <th>10 ASCII</th>
+                        </tr>
+                        <tr>
+                            <td>DES CRYPT</td>
+                            <td>&lt; $1</td>
+                            <td>&lt; $1</td>
+                            <td>&lt; $1</td>
+                            <td>&lt; $1</td>
+                        </tr>
+                        <tr>
+                            <td>MD5</td>
+                            <td>&lt; $1</td>
+                            <td>&lt; $1</td>
+                            <td>&lt; $1</td>
+                            <td>$1.1K</td>
+                        </tr>
+                        <tr>
+                            <td>MD5 CRYPT</td>
+                            <td>&lt; $1</td>
+                            <td>&lt; $1</td>
+                            <td>$130</td>
+                            <td>$1.1M</td>
+                        </tr>
+
+                    </table>
+                </section>
+
+                <section>
+                    <table>
+
+                        <tr>
+                            <th>KDF</th>
+                            <th>6 lower case letters</th>
+                            <th>8 lower case letters</th>
+                            <th>8 ASCII</th>
+                            <th>10 ASCII</th>
+                        </tr>
+
+                        <tr>
+                            <td>PDFKDF2 (100 ms)</td>
+                            <td>&lt; $1</td>
+                            <td>&lt; $1</td>
+                            <td>$18K</td>
+                            <td>$160M</td>
+                        </tr>
+
+                        <tr>
+                            <td>bcrypt (95 ms)</td>
+                            <td>&lt; $1</td>
+                            <td>$4</td>
+                            <td>$130K</td>
+                            <td>$1.2B</td>
+                        </tr>
+
+                        <tr>
+                            <td>scrypt (64 ms)</td>
+                            <td>&lt; $1</td>
+                            <td>$150</td>
+                            <td>$4.8M</td>
+                            <td>$43B</td>
+                        </tr>
+
+                    </table>
+                </section>
+
+                <section>
+                    Argon2 was released in 2015 and won the Password Hashing Competition
+                </section>
+
+                <section>
+                    <blockquote>People have weird ideas about the importance of picking password hashes. It's important not to use non-password-hashes. Other than that, which password hash you use? Not so important. —tptacek</blockquote>
+                    
+                </section>
+
+                <section>
+                    <h1>Sidebar</h1>
+                    <h2>BCrypt Benchmarks</h2>
+                </section>
+
+                <section>
+                    <img src="lib/img/bcrypt.png" />
+                    <caption>AWS C5 (3.0GHz) instance. bcrypt at cost 11 took 95ms on Colin Percival's 2009 laptop—Haskell is much slower</caption>
+                </section>
+
+                <section>
+                    <h1>Sidebar</h1>
+                    <h2>Bytes</h2>
+                    <p>Referencing "Cryptographic Hashing in Haskell" by Michael Snoyman</p>
+                </section>
+                
+                
+                <section>
+                    <h1>Bytes</h1>
+
+                    <ul>
+                        <li>Doesn't track offset/length of slice</li>
+                        <li>Uses slightly less memory, at the cost of not allowing slicing</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h1>Sidebar</h1>
+                    <h2>ScrubbedBytes</h2>
+                </section>
+
+                <section>
+                    <h1>ScrubbedBytes</h1>
+                    <ul>
+                        <li>Memory scrubbed after it goes out of scope</li>
+                        <li>Show instance doesn't show data</li>
+                        <li>Eq instance is constant time</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="lib/img/bytearray-short.png" />
+                </section>
+
+                <section>
+                    <h1>Introduction to Cryptonite</h1>
+                    <h3>@MaxTagher</h3>
+                </section>
+            </div>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info about config & dependencies:
+            // - https://github.com/hakimel/reveal.js#configuration
+            // - https://github.com/hakimel/reveal.js#dependencies
+            Reveal.initialize({
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ]
+            });
+        </script>
+    </body>
 </html>
